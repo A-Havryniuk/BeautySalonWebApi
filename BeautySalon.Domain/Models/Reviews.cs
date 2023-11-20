@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeautySalon.Infrastructure;
 
+[Index("EmployeeId", "Rate", Name = "indx_employee_rate")]
 public partial class Reviews
 {
     [Key]

@@ -15,6 +15,8 @@ public partial class BeautySalonContext : DbContext
     {
     }
 
+    public virtual DbSet<Admins> Admins { get; set; }
+
     public virtual DbSet<Appointments> Appointments { get; set; }
 
     public virtual DbSet<Clients> Clients { get; set; }
@@ -49,7 +51,23 @@ public partial class BeautySalonContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BeautySalonContext).Assembly);
+        modelBuilder.ApplyConfiguration(new Configurations.AdminsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.AppointmentsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ClientsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.DaysOfTheWeekConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.EmployeeScheduleConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.EmployeesConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ExpencesConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ItemsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.PaymentsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.PositionsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.PurchaseOrdersConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.RemainingGoodsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ReviewsConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.SalaryConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ServiceItemConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ServicesConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.StatusConfiguration());
 
         OnModelCreatingPartial(modelBuilder);
     }

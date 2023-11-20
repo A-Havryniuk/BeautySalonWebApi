@@ -16,6 +16,8 @@ namespace BeautySalon.Infrastructure.Database.Configurations
         {
             entity.HasKey(e => e.Id).HasName("PK__Employee__3213E83F5854F278");
 
+            entity.ToTable(tb => tb.HasTrigger("UpdateSalaryOnPercentageChange"));
+
             entity.HasOne(d => d.PositionNavigation).WithMany(p => p.Employees)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK__Employees__posit__3D5E1FD2");

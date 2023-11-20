@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeautySalon.Infrastructure;
 
+[Index("Id", Name = "indx_employee_id")]
 public partial class Employees
 {
     [Key]
@@ -37,6 +38,16 @@ public partial class Employees
 
     [Column("payment_percent")]
     public int? PaymentPercent { get; set; }
+
+    [Column("email")]
+    [StringLength(255)]
+    [Unicode(false)]
+    public string? Email { get; set; }
+
+    [Column("password_hash")]
+    [StringLength(255)]
+    [Unicode(false)]
+    public string? PasswordHash { get; set; }
 
     [InverseProperty("Employee")]
     public virtual ICollection<Appointments> Appointments { get; set; } = new List<Appointments>();

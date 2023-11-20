@@ -39,6 +39,11 @@ public partial class Clients
     [Unicode(false)]
     public string? Address { get; set; }
 
+    [Column("password_hash")]
+    [StringLength(255)]
+    [Unicode(false)]
+    public string? PasswordHash { get; set; }
+
     [InverseProperty("Client")]
     public virtual ICollection<Appointments> Appointments { get; set; } = new List<Appointments>();
 
