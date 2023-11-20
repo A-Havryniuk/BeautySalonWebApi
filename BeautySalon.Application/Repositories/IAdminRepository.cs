@@ -9,6 +9,6 @@ namespace BeautySalon.Application.Repositories
 {
     public interface IAdminRepository : IBaseRepository<Admins>
     {
-        public Task<Admins> GetByEmail(string email);
+        public Task<Admins> GetByEmailAsync(string email);
     }
 }

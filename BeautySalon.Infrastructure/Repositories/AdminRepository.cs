@@ -49,7 +49,7 @@ namespace BeautySalon.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<Admins> GetByEmail(string email)
+        public async Task<Admins> GetByEmailAsync(string email)
         {
             return await _context.Admins.FirstOrDefaultAsync(o => o.Email.Equals(email)) ?? throw new ArgumentNullException($"Employee with email {email} not found");
         }

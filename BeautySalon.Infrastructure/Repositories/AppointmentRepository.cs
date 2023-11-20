@@ -49,12 +49,12 @@ namespace BeautySalon.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<Appointments>> GetByClientId(int id)
+        public async Task<IEnumerable<Appointments>> GetByClientIdAsync(int id)
         {
             return await _context.Appointments.Where(a => a.ClientId == id).ToListAsync();
         }
 
-        public async Task<IEnumerable<Appointments>> GetByEmployeeId(int id)
+        public async Task<IEnumerable<Appointments>> GetByEmployeeIdAsync(int id)
         {
             return await _context.Appointments.Where(a => a.EmployeeId == id).ToListAsync();
         }
