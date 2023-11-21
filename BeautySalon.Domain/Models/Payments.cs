@@ -20,8 +20,8 @@ public partial class Payments
     [Column("sum")]
     public int Sum { get; set; }
 
-    [Column("date")]
-    public DateOnly Date { get; set; }
+    [Column("date", TypeName = "date")]
+    public DateTime Date { get; set; }
 
     [ForeignKey("AppointmentId")]
     [InverseProperty("Payments")]

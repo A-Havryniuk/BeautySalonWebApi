@@ -21,8 +21,8 @@ public partial class PurchaseOrders
     [Column("amount")]
     public int Amount { get; set; }
 
-    [Column("date")]
-    public DateOnly Date { get; set; }
+    [Column("date", TypeName = "date")]
+    public DateTime Date { get; set; }
 
     [ForeignKey("ItemId")]
     [InverseProperty("PurchaseOrders")]

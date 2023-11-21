@@ -28,8 +28,8 @@ public partial class Employees
     [Column("position")]
     public int Position { get; set; }
 
-    [Column("birthday")]
-    public DateOnly? Birthday { get; set; }
+    [Column("birthday", TypeName = "date")]
+    public DateTime? Birthday { get; set; }
 
     [Column("phone_number")]
     [StringLength(50)]

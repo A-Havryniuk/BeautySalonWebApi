@@ -1,15 +1,17 @@
 ﻿namespace BeautySalon.Contracts.Dtos
 {
-    public class ReviewDTO
+    public class AppointmentDTO
     {
-
         public int Id { get; set; }
+
         public string ClientEmail { get; set; }
 
         public string EmployeeEmail { get; set; }
 
-        public string Text { get; set; }
+        public string ServiceName { get; set; }
 
-        public int Rate { get; set; }
+        public DateTime DateTime { get; set; }
+
+        public string Status { get; set; }
     }
 }

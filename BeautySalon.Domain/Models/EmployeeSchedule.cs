@@ -22,10 +22,10 @@ public partial class EmployeeSchedule
     public int DayOfTheWeekId { get; set; }
 
     [Column("start_working_hour")]
-    public TimeOnly? StartWorkingHour { get; set; }
+    public TimeSpan? StartWorkingHour { get; set; }
 
     [Column("end_working_hour")]
-    public TimeOnly? EndWorkingHour { get; set; }
+    public TimeSpan? EndWorkingHour { get; set; }
 
     [ForeignKey("DayOfTheWeekId")]
     [InverseProperty("EmployeeSchedule")]

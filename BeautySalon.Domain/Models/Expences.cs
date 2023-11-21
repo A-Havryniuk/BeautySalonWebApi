@@ -17,6 +17,6 @@ public partial class Expences
     [Column("sum")]
     public double Sum { get; set; }
 
-    [Column("date")]
-    public DateOnly Date { get; set; }
+    [Column("date", TypeName = "date")]
+    public DateTime Date { get; set; }
 }
