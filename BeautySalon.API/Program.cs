@@ -1,6 +1,9 @@
+using System.Security.Cryptography;
 using BeautySalon.Application.Repositories;
+using BeautySalon.Application.Service.Interfaces;
 using BeautySalon.Infrastructure.Database;
 using BeautySalon.Infrastructure.Repositories;
+using BeautySalon.Infrastructure.Service;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +21,7 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IHashService, Sha512Service>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
