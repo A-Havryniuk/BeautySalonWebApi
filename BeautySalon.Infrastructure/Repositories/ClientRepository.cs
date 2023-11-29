@@ -18,9 +18,9 @@ namespace BeautySalon.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Clients>> GetAllAsync()
+        public async Task<IQueryable<Clients>> GetAllAsync()
         {
-            return await _context.Clients.ToListAsync();
+            return  _context.Clients;
         }
 
         public async Task<Clients> GetByIdAsync(int id)
@@ -36,6 +36,9 @@ namespace BeautySalon.Infrastructure.Repositories
 
         public async Task UpdateAsync(Clients entity)
         {
+            var obj = await GetByIdAsync(entity.Id);
+            entity.PasswordHash = obj.PasswordHash;
+            _context.Entry(obj).State = EntityState.Detached;
             _context.Clients.Update(entity);
             await _context.SaveChangesAsync();
         }

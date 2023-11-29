@@ -8,7 +8,7 @@ namespace BeautySalon.Application.Repositories
 {
     public interface IBaseRepository<T>
     {
-        public Task<IEnumerable<T>> GetAllAsync();
+        public Task<IQueryable<T>> GetAllAsync();
         public Task<T> GetByIdAsync(int id);
         public Task InsertAsync(T entity);
         public Task UpdateAsync(T entity);

@@ -17,9 +17,9 @@ namespace BeautySalon.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<Appointments>> GetAllAsync()
+        public async Task<IQueryable<Appointments>> GetAllAsync()
         {
-            return await _context.Appointments.ToListAsync();
+            return  _context.Appointments;
         }
 
         public async Task<Appointments> GetByIdAsync(int id)

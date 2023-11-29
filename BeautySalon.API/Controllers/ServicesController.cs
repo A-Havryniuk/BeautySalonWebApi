@@ -2,8 +2,10 @@
 using BeautySalon.Contracts.Dtos;
 using BeautySalon.Infrastructure;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace BeautySalon.API.Controllers
 {
@@ -21,6 +23,7 @@ namespace BeautySalon.API.Controllers
         }
 
         [HttpGet(Name = "GetAllServices")]
+        [Authorize(Roles = "admin, client, employee")]
         public async Task<IEnumerable<ServiceDTO>> GetAllAsync()
         {
             var list = await _serviceRepo.GetAllAsync();
@@ -28,6 +31,7 @@ namespace BeautySalon.API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetServiceById")]
+        [Authorize(Roles = "admin")]
         public async Task<ServiceDTO> GetByIdAsync(int id)
         {
             var entity = await _serviceRepo.GetByIdAsync(id);
@@ -36,18 +40,21 @@ namespace BeautySalon.API.Controllers
         
 
         [HttpPost(Name = "AddService")]
+        [Authorize(Roles = "admin")]
         public async Task AddAsync(ServiceDTO entity)
         {
             var obj = _mapper.Map<Services>(entity);
             await _serviceRepo.InsertAsync(obj);
         }
         [HttpPut(Name = "UpdateService")]
+        [Authorize(Roles = "admin")]
         public async Task UpdateAsync(ServiceDTO employee)
         {
             var entity = _mapper.Map<Services>(employee);
             await _serviceRepo.UpdateAsync(entity);
         }
         [HttpDelete(Name = "DeleteService")]
+        [Authorize(Roles = "admin")]
         public async Task DeleteAsync(int id)
         {
             await _serviceRepo.DeleteAsync(id);

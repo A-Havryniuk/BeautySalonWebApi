@@ -1,9 +1,13 @@
 ﻿using BeautySalon.Application.Repositories;
+using BeautySalon.Application.Service.Interfaces;
 using BeautySalon.Contracts.Dtos;
 using BeautySalon.Infrastructure;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Data;
 
 namespace BeautySalon.API.Controllers
 {
@@ -13,14 +17,17 @@ namespace BeautySalon.API.Controllers
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IMapper _mapper;
+        private readonly IHashService _hashService;
 
-        public EmployeesController(IEmployeeRepository employeeRepo, IMapper mapper)
+        public EmployeesController(IEmployeeRepository employeeRepo, IMapper mapper, IHashService hashService)
         {
             _employeeRepo = employeeRepo;
             _mapper = mapper;
+            _hashService = hashService;
         }
 
         [HttpGet(Name = "GetAllEmployees")]
+        [Authorize(Roles = "admin")]
         public async Task<IEnumerable<EmployeeDTO>> GetAllAsync()
         {
             var list = await _employeeRepo.GetAllAsync();
@@ -28,12 +35,14 @@ namespace BeautySalon.API.Controllers
         }
 
         [HttpGet("{id:int}", Name="GetEmployeeById")]
+        [Authorize(Roles = "admin")]
         public async Task<EmployeeDTO> GetByIdAsync(int id)
         {
             var entity = await _employeeRepo.GetByIdAsync(id);
             return _mapper.Map<EmployeeDTO>(entity);
         }
         [HttpGet("{email:alpha}", Name = "GetEmployeeByEmail")]
+        [Authorize(Roles = "admin")]
         public async Task<EmployeeDTO> GetByEmailAsync(string email)
         {
             var entity = await _employeeRepo.GetByEmailAsync(email);
@@ -41,18 +50,22 @@ namespace BeautySalon.API.Controllers
         }
 
         [HttpPost(Name = "AddEmployee")]
+        [Authorize(Roles = "admin")]
         public async Task AddAsync(EmployeeDTO entity)
         {
             var obj = _mapper.Map<Employees>(entity);
+            obj.PasswordHash = _hashService.GetHash(entity.Password);
             await _employeeRepo.InsertAsync(obj);
         }
         [HttpPut(Name = "UpdateEmployee")]
+        [Authorize(Roles = "employee")]
         public async Task UpdateAsync(EmployeeDTO employee)
         {
             var entity = _mapper.Map<Employees>(employee);
             await _employeeRepo.UpdateAsync(entity);
         }
         [HttpDelete(Name = "DeleteEmployee")]
+        [Authorize(Roles = "admin")]
         public async Task DeleteAsync(int id)
         {
             await _employeeRepo.DeleteAsync(id);

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BeautySalon.Application.Repositories;
+﻿using BeautySalon.Application.Repositories;
 using BeautySalon.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace BeautySalon.Infrastructure.Repositories
 {
@@ -18,9 +12,25 @@ namespace BeautySalon.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<Reviews>> GetAllAsync()
+
+        public async Task<bool> DeleteAsync(int id)
         {
-            return await _context.Reviews.ToListAsync();
+            var entity = await _context.Reviews.FirstOrDefaultAsync(a => a.Id == id);
+            if (entity is null)
+                return false;
+            _context.Reviews.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IQueryable<Reviews>> GetAllAsync()
+        {
+            return _context.Reviews;
+        }
+
+        public async Task<Reviews> GetByIdAsync(int id)
+        {
+            return await _context.Reviews.FirstOrDefaultAsync(a => a.Id == id) ?? throw new ArgumentNullException($"Review with id {id} not found");
         }
 
         public async Task<IEnumerable<Reviews>> GetByRateAsync(int rate)
@@ -31,6 +41,12 @@ namespace BeautySalon.Infrastructure.Repositories
         public async Task InsertAsync(Reviews entity)
         {
             await _context.Reviews.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Reviews entity)
+        {
+            _context.Reviews.Update(entity);
             await _context.SaveChangesAsync();
         }
     }

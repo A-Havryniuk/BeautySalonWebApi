@@ -17,14 +17,14 @@ namespace BeautySalon.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<Admins>> GetAllAsync()
+        public async Task<IQueryable<Admins>> GetAllAsync()
         {
-            return await _context.Admins.ToListAsync();
+            return  _context.Admins;
         }
 
         public async Task<Admins> GetByIdAsync(int id)
         {
-            return await _context.Admins.FirstOrDefaultAsync(a => a.Id == id) ?? throw new ArgumentNullException($"aDMIN with id {id} not found");
+            return await _context.Admins.FirstOrDefaultAsync(a => a.Id == id) ?? throw new ArgumentNullException($"Admin with id {id} not found");
         }
 
         public async Task InsertAsync(Admins entity)
@@ -35,6 +35,9 @@ namespace BeautySalon.Infrastructure.Repositories
 
         public async Task UpdateAsync(Admins entity)
         {
+            var obj = await GetByIdAsync(entity.Id);
+            entity.PasswordHash = obj.PasswordHash;
+            _context.Entry(obj).State = EntityState.Detached;
             _context.Admins.Update(entity);
             await _context.SaveChangesAsync();
         }
@@ -51,7 +54,7 @@ namespace BeautySalon.Infrastructure.Repositories
 
         public async Task<Admins> GetByEmailAsync(string email)
         {
-            return await _context.Admins.FirstOrDefaultAsync(o => o.Email.Equals(email)) ?? throw new ArgumentNullException($"Employee with email {email} not found");
+            return await _context.Admins.FirstOrDefaultAsync(o => o.Email.Equals(email)) ?? throw new ArgumentNullException($"Admin with email {email} not found");
         }
     }
 }

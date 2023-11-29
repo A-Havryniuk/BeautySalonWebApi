@@ -1,10 +1,13 @@
 ﻿using BeautySalon.Application.Repositories;
+using BeautySalon.Application.Service.Interfaces;
 using BeautySalon.Contracts.Dtos;
 using BeautySalon.Infrastructure;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeautySalon.API.Controllers
 {
@@ -14,27 +17,30 @@ namespace BeautySalon.API.Controllers
     {
         private readonly IClientRepository _clientRepo;
         private readonly IMapper _mapper;
+        private readonly IHashService _hashService;
 
-        public ClientsController(IClientRepository clientRepo, IMapper mapper)
+        public ClientsController(IClientRepository clientRepo, IMapper mapper, IHashService hashServ)
         {
             _clientRepo = clientRepo;
             _mapper = mapper;
+            _hashService = hashServ;
         }
 
         [HttpGet(Name="GetAllClients")]
+        [Authorize(Roles = "admin, client")]
         public async Task<IEnumerable<ClientDTO>> GetAllAsync()
         {
             var list = await _clientRepo.GetAllAsync();
             return _mapper.Map<IEnumerable<ClientDTO>>(list);
         }
-
+        [Authorize(Roles = "admin, client")]
         [HttpGet("{id:int}",Name="GetClientById")]
         public async Task<ClientDTO> GetByIdAsync(int id)
         {
             var client = await _clientRepo.GetByIdAsync(id);
             return _mapper.Map<ClientDTO>(client);
         }
-
+        [Authorize(Roles = "admin, client")]
         [HttpGet("{email:alpha}", Name = "GetClientByEmail")]
         public async Task<ClientDTO> GetByEmailAsync(string email)
         {
@@ -43,13 +49,16 @@ namespace BeautySalon.API.Controllers
         }
 
         [HttpPost(Name = "AddClient")]
+        [Authorize(Roles = "admin")]
         public async Task AddAsync(ClientDTO client)
         {
             var entity = _mapper.Map<Clients>(client);
+            entity.PasswordHash = _hashService.GetHash(client.Password);
             await _clientRepo.InsertAsync(entity);
         }
 
         [HttpPut(Name = "UpdateClient")]
+        [Authorize(Roles = "client")]
         public async Task UpdateAsync(ClientDTO client)
         {
             var entity = _mapper.Map<Clients>(client);
@@ -57,6 +66,7 @@ namespace BeautySalon.API.Controllers
         }
 
         [HttpDelete(Name = "DeleteClient")]
+        [Authorize(Roles = "admin")]
         public async Task DeleteAsync(int id)
         {
             await _clientRepo.DeleteAsync(id);

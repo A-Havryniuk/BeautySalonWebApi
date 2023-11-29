@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using BeautySalon.Application.Repositories;
 using BeautySalon.Application.Service.Interfaces;
+using BeautySalon.Contracts.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,61 @@ namespace BeautySalon.API.Controllers
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;
+        }
+
+        [HttpPost]
+        [Route("/login-admin")]
+        public async Task<ActionResult<string>> AdminLoginAsync(LoginDTO entity)
+        {
+            var admin = await _adminRepository.GetByEmailAsync(entity.Email);
+            if (admin == null)
+            {
+                return Unauthorized("Admin not found");
+            }
+
+            if (!_hashService.VerifyHash(entity.Password, admin.PasswordHash))
+            {
+                return Unauthorized("Password is wrong");
+            }
+
+            var token = GetToken(entity.Email, "admin");
+            return Ok(token);
+        }
+        [HttpPost]
+        [Route("/login-employee")]
+        public async Task<ActionResult<string>> EmployeeLoginAsync(LoginDTO entity)
+        {
+            var employee = await _employeeRepository.GetByEmailAsync(entity.Email);
+            if (employee == null)
+            {
+                return Unauthorized("Employee not found");
+            }
+
+            if (!_hashService.VerifyHash(entity.Password, employee.PasswordHash))
+            {
+                return Unauthorized("Password is wrong");
+            }
+
+            var token = GetToken(entity.Email, "employee");
+            return Ok(token);
+        }
+        [HttpPost]
+        [Route("/login-client")]
+        public async Task<ActionResult<string>> ClientLoginAsync(LoginDTO entity)
+        {
+            var client = await _clientRepository.GetByEmailAsync(entity.Email);
+            if (client == null)
+            {
+                return Unauthorized("Client not found");
+            }
+
+            if (!_hashService.VerifyHash(entity.Password, client.PasswordHash))
+            {
+                return Unauthorized("Password is wrong");
+            }
+
+            var token = GetToken(entity.Email, "client");
+            return Ok(token);
         }
     }
 }

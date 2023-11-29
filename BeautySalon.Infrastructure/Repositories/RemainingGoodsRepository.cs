@@ -17,9 +17,9 @@ namespace BeautySalon.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<RemainingGoods>> GetAllAsync()
+        public async Task<IQueryable<RemainingGoods>> GetAllAsync()
         {
-            return await _context.RemainingGoods.ToListAsync();
+            return  _context.RemainingGoods;
         }
 
         public async Task<RemainingGoods> GetByIdAsync(int id)
