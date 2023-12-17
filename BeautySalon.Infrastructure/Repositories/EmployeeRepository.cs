@@ -19,7 +19,7 @@ namespace BeautySalon.Infrastructure.Repositories
         }
         public async Task<IQueryable<Employees>> GetAllAsync()
         {
-            return _context.Employees;
+            return _context.Employees.Include(x => x.PositionNavigation);
         }
 
         public async Task<Employees> GetByIdAsync(int id)
@@ -47,6 +47,7 @@ namespace BeautySalon.Infrastructure.Repositories
             var entity = await _context.Employees.FirstOrDefaultAsync(a => a.Id == id);
             if (entity is null)
                 return false;
+
             _context.Employees.Remove(entity);
             await _context.SaveChangesAsync(); 
             return true;

@@ -19,7 +19,7 @@ namespace BeautySalon.Infrastructure.Repositories
         }
         public async Task<IQueryable<Appointments>> GetAllAsync()
         {
-            return  _context.Appointments;
+            return _context.Appointments;
         }
 
         public async Task<Appointments> GetByIdAsync(int id)
@@ -45,6 +45,20 @@ namespace BeautySalon.Infrastructure.Repositories
             if (entity is null)
                 return false;
             _context.Appointments.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteByClientIdAsync(int id)
+        {
+            var entities = await _context.Appointments.Where(a => a.ClientId == id).ToListAsync();
+            if (entities is null)
+                return false;
+            foreach (var ent in entities)
+            {
+
+                _context.Appointments.Remove(ent);
+            }
             await _context.SaveChangesAsync();
             return true;
         }

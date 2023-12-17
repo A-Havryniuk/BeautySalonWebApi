@@ -1,11 +1,15 @@
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using BeautySalon.API.Mapping;
 using BeautySalon.API.Middlewares;
 using BeautySalon.Application.Repositories;
 using BeautySalon.Application.Service.Interfaces;
+using BeautySalon.Infrastructure;
 using BeautySalon.Infrastructure.Database;
 using BeautySalon.Infrastructure.Repositories;
 using BeautySalon.Infrastructure.Service;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +21,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
-builder.Services.AddScoped<IMapper, Mapper>();
+var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
+typeAdapterConfig.Scan(Assembly.GetAssembly(typeof(EmployeeMappingProfile)));
+var mapperConfig = new Mapper(typeAdapterConfig);
+builder.Services.AddSingleton<IMapper>(mapperConfig);
+//builder.Services.AddScoped<IMapper, Mapper>();
 builder.Services.AddDbContext<BeautySalonContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BeautySalonContext")));
 
@@ -44,6 +51,17 @@ builder.Services.AddSwaggerGen(opt =>
     opt.OperationFilter<SecurityRequirementsOperationFilter>();
 
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularClient", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
         opt.TokenValidationParameters = new TokenValidationParameters
@@ -52,7 +70,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 builder.Configuration.GetSection("Token:Key").Value)),
             ValidateIssuer = false,
-            ValidateAudience = false
+            ValidateAudience = false,
         });
 var app = builder.Build();
 
@@ -70,6 +88,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("AngularClient");
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

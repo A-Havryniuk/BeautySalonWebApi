@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BeautySalon.API.Controllers
 {
@@ -29,7 +30,7 @@ namespace BeautySalon.API.Controllers
             _adminRepository = adminRepository;
         }
 
-
+        
         private string GetToken(string email, string role)
         {
             List<Claim> claims = new List<Claim>
@@ -50,23 +51,38 @@ namespace BeautySalon.API.Controllers
             return jwt;
         }
 
+
+        [SwaggerResponse(
+            StatusCodes.Status200OK,
+            "Authorized successfully",
+            typeof(TokenDTO)
+        )]
+        [SwaggerResponse(
+            StatusCodes.Status400BadRequest,
+            "Validation not passed",
+            typeof(ValidationProblemDetails)
+        )]
         [HttpPost]
         [Route("/login-admin")]
-        public async Task<ActionResult<string>> AdminLoginAsync(LoginDTO entity)
+        public async Task<ActionResult<TokenDTO>> AdminLoginAsync(LoginDTO entity)
         {
             var admin = await _adminRepository.GetByEmailAsync(entity.Email);
             if (admin == null)
             {
-                return Unauthorized("Admin not found");
+                return ValidationProblem("Admin not found");
             }
 
             if (!_hashService.VerifyHash(entity.Password, admin.PasswordHash))
             {
-                return Unauthorized("Password is wrong");
+                return ValidationProblem("Password is wrong");
             }
 
             var token = GetToken(entity.Email, "admin");
-            return Ok(token);
+            return Ok(new TokenDTO()
+            {
+                Id = admin.Id,
+                Token = token
+            });
         }
         [HttpPost]
         [Route("/login-employee")]

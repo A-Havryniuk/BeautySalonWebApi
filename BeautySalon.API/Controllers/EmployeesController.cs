@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Data;
+using Mapster;
 
 namespace BeautySalon.API.Controllers
 {
@@ -31,7 +32,7 @@ namespace BeautySalon.API.Controllers
         public async Task<IEnumerable<EmployeeDTO>> GetAllAsync()
         {
             var list = await _employeeRepo.GetAllAsync();
-            return _mapper.Map<IEnumerable<EmployeeDTO>>(list);
+            return list.Adapt<IEnumerable<EmployeeDTO>>(_mapper.Config);
         }
 
         [HttpGet("{id:int}", Name="GetEmployeeById")]
@@ -54,17 +55,18 @@ namespace BeautySalon.API.Controllers
         public async Task AddAsync(EmployeeDTO entity)
         {
             var obj = _mapper.Map<Employees>(entity);
-            obj.PasswordHash = _hashService.GetHash(entity.Password);
+           // obj.PasswordHash = _hashService.GetHash(entity.Password);
             await _employeeRepo.InsertAsync(obj);
         }
         [HttpPut(Name = "UpdateEmployee")]
-        [Authorize(Roles = "employee")]
+        [Authorize(Roles = "admin, employee")]
         public async Task UpdateAsync(EmployeeDTO employee)
         {
             var entity = _mapper.Map<Employees>(employee);
             await _employeeRepo.UpdateAsync(entity);
         }
-        [HttpDelete(Name = "DeleteEmployee")]
+
+        [HttpDelete("{id:int}", Name = "DeleteEmployee")]
         [Authorize(Roles = "admin")]
         public async Task DeleteAsync(int id)
         {

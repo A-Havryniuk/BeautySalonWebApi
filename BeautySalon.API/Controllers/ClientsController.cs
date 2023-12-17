@@ -16,14 +16,16 @@ namespace BeautySalon.API.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly IClientRepository _clientRepo;
+        private readonly IAppointmentRepository _appointmentRepo;
         private readonly IMapper _mapper;
         private readonly IHashService _hashService;
 
-        public ClientsController(IClientRepository clientRepo, IMapper mapper, IHashService hashServ)
+        public ClientsController(IClientRepository clientRepo, IMapper mapper, IHashService hashServ, IAppointmentRepository appointmentRepo)
         {
             _clientRepo = clientRepo;
             _mapper = mapper;
             _hashService = hashServ;
+            _appointmentRepo = appointmentRepo;
         }
 
         [HttpGet(Name="GetAllClients")]
@@ -69,6 +71,7 @@ namespace BeautySalon.API.Controllers
         [Authorize(Roles = "admin")]
         public async Task DeleteAsync(int id)
         {
+            await _appointmentRepo.DeleteByClientIdAsync(id);
             await _clientRepo.DeleteAsync(id);
         }
     }

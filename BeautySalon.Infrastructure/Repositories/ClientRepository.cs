@@ -45,6 +45,7 @@ namespace BeautySalon.Infrastructure.Repositories
 
         public async Task<bool> DeleteAsync(int id)
         {
+
             var entity = await _context.Clients.FirstOrDefaultAsync(a => a.Id == id);
             if (entity is null)
                 return false;
